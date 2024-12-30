@@ -6,9 +6,9 @@ import { HeaderComponent } from './header/header.component';
 import { ProductListComponent } from './pages/product-list/product-list.component';
 @Component({
   selector: 'app-root',
-  imports: [HeaderComponent, ProductListComponent],
+  imports: [HeaderComponent, RouterOutlet],
   template: `<my-new-selector/>
-  <app-product-list/> `,
+  <router-outlet/> `,
   styleUrl: './app.component.scss'
 })
 export class AppComponent {
