@@ -4,7 +4,9 @@ import {HttpClient, HttpHeaders, HttpClientModule } from '@angular/common/http'
 import { Observable } from 'rxjs';
 import {FormsModule } from '@angular/forms'
 import { LoginModel } from '../../login/login-model';
-
+import { response } from 'express';
+import { of } from 'rxjs'; // Import `of` từ RxJS để trả về Observable trong trường hợp có lỗi
+import { catchError } from 'rxjs';
 const httpOptions = {
   headers: new HttpHeaders({
     'Content-Type':'Application/json'
@@ -103,7 +105,13 @@ export class LoginComponent {
   // Phương thức gọi API
   getAll(username: string, password: string): Observable<LoginModel> {
     const body = { username, password }; // Tạo object chứa thông tin body
-    return this.httpClient.post<LoginModel>(loginUrl, body);
+    return this.httpClient.post<LoginModel>(loginUrl, body).pipe(
+      catchError(error => {
+        console.error('Error occurred:', error.error.userMessage); // Log lỗi chi tiết
+        alert('Login failed! Error details: ' + error.message);
+        return of({ status: 'error', userMessage: 'Login failed' } as LoginModel); // Trả về observable giả trong trường hợp lỗi
+      })
+    );;
   }
 
   // Xử lý khi người dùng đăng nhập
@@ -117,15 +125,16 @@ export class LoginComponent {
           
           loginToken = JSON.stringify(response.data); // Lưu token nhận được
           console.log('Login successful, token:', loginToken);
+          alert(response.userMessage);
         }
         catch(error){
           console.error('Failed to parse response:', error);
-          alert('Invalid response format!');
+          alert('Invalid response format!' + response.userMessage);
         }
         
       },
       error: (err) => {
-        console.error('Login failed:', err);
+        console.error('Login failed:');
         alert('Login failed! Please check your credentials.');
       }
     });

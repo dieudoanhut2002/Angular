@@ -1,5 +1,5 @@
 export class LoginModel {
     data: string | undefined;
-    usermessage: string | undefined;
+    userMessage: string | undefined;
     status: string | undefined;
 }
